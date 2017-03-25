@@ -1,0 +1,16 @@
+environment:
+ 
+install:
+  - @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+  - choco install -fy visualstudio2017buildtools --package-parameters "--includeOptional"
+  - choco install -fy visualstudio2017-workload-webbuildtools --package-parameters "--includeOptional"
+
+build_script:
+  # Build the compiled extension
+  - .\nuget\nuget.exe restore ASPNETWebApp.sln
+  - msbuild .\ASPNETWebApp\ASPNETWebApp.csproj
+
+
+artifacts:
+  # Archive the generated packages in the ci.appveyor.com build report.
+  - path: dist\*
